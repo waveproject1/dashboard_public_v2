@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Status zamówienia #{{ order.id }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4>Status zamówienia #{{ order.id }}</h4>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <h5>{{ order.title }}</h5>
+                    <p class="text-muted">Złożono: {{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                </div>
+                
+                <div class="mb-4">
+                    <h6>Opis zamówienia:</h6>
+                    <p>{{ order.description }}</p>
+                </div>
+                
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0">Status:</h6>
+                        <span class="badge bg-{{ 'primary' if order.status == 'Nowe' else 'warning' if order.status == 'W trakcie' else 'success' }}">
+                            {{ order.status }}
+                        </span>
+                    </div>
+                    
+                    {% if order.admin_comment %}
+                    <div class="alert alert-info mt-3">
+                        <h6>Komentarz administracji:</h6>
+                        <p>{{ order.admin_comment }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="progress mb-4" style="height: 20px;">
+                    {% if order.status == 'Nowe' %}
+                        <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+                    {% elif order.status == 'W trakcie' %}
+                        <div class="progress-bar" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">60%</div>
+                    {% else %}
+                        <div class="progress-bar" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">100%</div>
+                    {% endif %}
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="{{ url_for('user_orders') }}" class="btn btn-secondary">Powrót do listy</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

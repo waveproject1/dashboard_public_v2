@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Zamówienie #{{ order.id }} - Panel Admina{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4>Zamówienie #{{ order.id }}</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin_order_detail', order_id=order.id) }}">
+                    <div class="mb-4">
+                        <h5>{{ order.title }}</h5>
+                        <p class="text-muted">Klient: {{ user.email }}</p>
+                        <p class="text-muted">Złożono: {{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6>Opis zamówienia:</h6>
+                        <p>{{ order.description }}</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select" id="status" name="status">
+                            <option value="Nowe" {{ 'selected' if order.status == 'Nowe' }}>Nowe</option>
+                            <option value="W trakcie" {{ 'selected' if order.status == 'W trakcie' }}>W trakcie</option>
+                            <option value="Zakończone" {{ 'selected' if order.status == 'Zakończone' }}>Zakończone</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="admin_comment" class="form-label">Komentarz administracji</label>
+                        <textarea class="form-control" id="admin_comment" name="admin_comment" rows="3">{{ order.admin_comment if order.admin_comment }}</textarea>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('admin_orders') }}" class="btn btn-secondary">Powrót do listy</a>
+                        <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Panel Administracyjny{% endblock %}
+
+{% block content %}
+<h2>Panel Administracyjny</h2>
+<p class="lead">Statystyki systemu</p>
+
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Nowe zamówienia</h5>
+                <p class="card-text display-4">{{ new_orders }}</p>
+                <a href="{{ url_for('admin_orders', status='new') }}" class="text-white">Zobacz</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning mb-3">
+            <div class="card-body">
+                <h5 class="card-title">W trakcie</h5>
+                <p class="card-text display-4">{{ in_progress }}</p>
+                <a href="{{ url_for('admin_orders', status='in_progress') }}" class="text-white">Zobacz</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Zakończone</h5>
+                <p class="card-text display-4">{{ completed }}</p>
+                <a href="{{ url_for('admin_orders', status='completed') }}" class="text-white">Zobacz</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Użytkownicy</h5>
+                <p class="card-text display-4">{{ users }}</p>
+                <a href="{{ url_for('admin_users') }}" class="text-white">Zobacz</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Ostatnie zamówienia</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tytuł</th>
+                                <th>Klient</th>
+                                <th>Status</th>
+                                <th>Data złożenia</th>
+                                <th>Akcje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in recent_orders %}
+                                <p>{{ order.id }} - {{ order.created_at }}</p>
+                            
+                            <tr>
+                                <td>{{ order.id }}</td>
+                                <td>{{ order.title|truncate(30) }}</td>
+                                <td>{{ order.user.email }}</td>
+                                <td>
+                                    <span class="badge bg-{{ 'primary' if order.status == 'Nowe' else 'warning' if order.status == 'W trakcie' else 'success' }}">
+                                        {{ order.status }}
+                                    </span>
+                                </td>
+                                <td>{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>
+                                    <a href="{{ url_for('admin_order_detail', order_id=order.id) }}" class="btn btn-sm btn-outline-primary">Szczegóły</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer text-end">
+                <a href="{{ url_for('admin_orders') }}" class="btn btn-primary">Wszystkie zamówienia</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

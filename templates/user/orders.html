@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Moje zamówienia{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2>Moje zamówienia</h2>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Lista zamówień</h5>
+                    <a href="{{ url_for('new_order') }}" class="btn btn-sm btn-primary">Nowe zamówienie</a>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if orders %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tytuł</th>
+                                    <th>Status</th>
+                                    <th>Data złożenia</th>
+                                    <th>Ostatnia aktualizacja</th>
+                                    <th>Akcje</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders %}
+                                <tr>
+                                    <td>{{ order.id }}</td>
+                                    <td>{{ order.title }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'primary' if order.status == 'Nowe' else 'warning' if order.status == 'W trakcie' else 'success' }}">
+                                            {{ order.status }}
+                                        </span>
+                                    </td>
+                                    <td>{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td>{{ order.updated_at.strftime('%Y-%m-%d %H:%M') if order.updated_at else '-' }}</td>
+                                    <td>
+                                        <a href="{{ url_for('order_status', order_id=order.id) }}" class="btn btn-sm btn-outline-primary">Szczegóły</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p>Nie masz jeszcze żadnych zamówień.</p>
+                    <a href="{{ url_for('new_order') }}" class="btn btn-primary">Złóż pierwsze zamówienie</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% block title %}Formularz Wyceny Strony{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div id="form-container" class="card">
+            <div class="card-header">
+                <h1 class="h4 mb-0">Formularz Wyceny Strony</h1>
+            </div>
+            <div class="card-body">
+                <form id="contact-form" method="POST" action="{{ url_for('new_order') }}">
+                    <!-- Krok 1 -->
+                    <div class="form-step active" data-step="1">
+                        <div class="mb-3">
+                            <label for="website-type" class="form-label">Jaki typ strony chcesz stworzyć?</label>
+                            <input type="text" class="form-control" id="website-type" name="website_type" 
+                                   placeholder="np. Strona wizytówka, Sklep internetowy, Portal informacyjny" required>
+                        </div>
+                        <button type="button" class="btn btn-primary next-button" data-next="2"> </button>
+                    </div>
+
+                    <!-- Krok 2 -->
+                    <div class="form-step" data-step="2">
+                        <div class="mb-3">
+                            <label for="pages-count" class="form-label">Ile podstron ma mieć Twoja strona?</label>
+                            <input type="number" class="form-control" id="pages-count" name="pages_count" 
+                                   placeholder="np. 5" min="1" required>
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary prev-button me-2" data-prev="1">Wstecz</button>
+                        <button type="button" class="btn btn-primary next-button" data-next="3"> </button>
+                    </div>
+
+                    <!-- Krok 3 -->
+                    <div class="form-step" data-step="3">
+                        <div class="mb-3">
+                            <label for="features" class="form-label">Jakie dodatkowe funkcjonalności są wymagane?</label>
+                            <textarea class="form-control" id="features" name="features" 
+                                      placeholder="np. System rezerwacji, Formularz kontaktowy, Integracja z płatnościami" 
+                                      rows="4" required></textarea>
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary prev-button me-2" data-prev="2">Wstecz</button>
+                        <button type="button" class="btn btn-primary next-button" data-next="4"> </button>
+                    </div>
+
+                    <!-- Krok 4 -->
+                    <div class="form-step" data-step="4">
+                        <div class="mb-3">
+                            <label for="deadline" class="form-label">Jaki jest termin realizacji projektu?</label>
+                            <input type="date" class="form-control" id="deadline" name="deadline" required>
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary prev-button me-2" data-prev="3">Wstecz</button>
+                        <button type="button" class="btn btn-primary next-button" data-next="5"> </button>
+                    </div>
+
+                    <!-- Krok 5 -->
+                    <div class="form-step" data-step="5">
+                        <div class="mb-3">
+                            <label for="budget" class="form-label">Jaki jest Twój budżet (PLN)?</label>
+                            <input type="number" class="form-control" id="budget" name="budget" 
+                                   placeholder="np. 5000" min="0" required>
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary prev-button me-2" data-prev="4">Wstecz</button>
+                        <button type="button" class="btn btn-primary next-button" data-next="6"> </button>
+                    </div>
+
+                    <!-- Krok 6 -->
+                    <div class="form-step" data-step="6">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Podaj swoje imię i nazwisko</label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   placeholder="Jan Kowalski" required>
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary prev-button me-2" data-prev="5">Wstecz</button>
+                        <button type="button" class="btn btn-primary next-button" data-next="7"> </button>
+                    </div>
+
+                    <!-- Krok 7 -->
+                    <div class="form-step" data-step="7">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Podaj swój adres e-mail</label>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   placeholder="twoj@email.com" required>
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary prev-button me-2" data-prev="6">Wstecz</button>
+                        <button type="button" class="btn btn-primary next-button" data-next="8"> </button>
+                    </div>
+
+                    <!-- Krok 8 -->
+                    <div class="form-step" data-step="8">
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Podaj numer telefonu (opcjonalnie)</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" 
+                                   placeholder="+48 123 456 789">
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary prev-button me-2" data-prev="7">Wstecz</button>
+                        <button type="submit" class="btn btn-success">Wyślij zamówienie</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const formSteps = document.querySelectorAll('.form-step');
+    const nextButtons = document.querySelectorAll('.next-button');
+    const prevButtons = document.querySelectorAll('.prev-button');
+    
+    // Przejście do następnego kroku
+    nextButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const currentStep = this.closest('.form-step');
+            const nextStepNum = this.getAttribute('data-next');
+            const nextStep = document.querySelector(`.form-step[data-step="${nextStepNum}"]`);
+            
+            // Walidacja przed przejściem dalej
+            const inputs = currentStep.querySelectorAll('input, textarea');
+            let isValid = true;
+            
+            inputs.forEach(input => {
+                if (!input.checkValidity()) {
+                    input.reportValidity();
+                    isValid = false;
+                }
+            });
+            
+            if (isValid) {
+                currentStep.classList.remove('active');
+                nextStep.classList.add('active');
+                
+                // Płynne przewijanie do góry formularza
+                document.getElementById('form-container').scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+    
+    // Powrót do poprzedniego kroku
+    prevButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const currentStep = this.closest('.form-step');
+            const prevStepNum = this.getAttribute('data-prev');
+            const prevStep = document.querySelector(`.form-step[data-step="${prevStepNum}"]`);
+            
+            currentStep.classList.remove('active');
+            prevStep.classList.add('active');
+            
+            // Płynne przewijanie do góry formularza
+            document.getElementById('form-container').scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

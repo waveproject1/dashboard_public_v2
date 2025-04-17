@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Zamówienia - Panel Admina{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2>Zarządzanie zamówieniami</h2>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Lista zamówień</h5>
+                    <div class="btn-group">
+                        <a href="{{ url_for('admin_orders', status='all') }}" class="btn btn-sm btn-outline-secondary {{ 'active' if status == 'all' }}">Wszystkie</a>
+                        <a href="{{ url_for('admin_orders', status='new') }}" class="btn btn-sm btn-outline-primary {{ 'active' if status == 'new' }}">Nowe</a>
+                        <a href="{{ url_for('admin_orders', status='in_progress') }}" class="btn btn-sm btn-outline-warning {{ 'active' if status == 'in_progress' }}">W trakcie</a>
+                        <a href="{{ url_for('admin_orders', status='completed') }}" class="btn btn-sm btn-outline-success {{ 'active' if status == 'completed' }}">Zakończone</a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if orders %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tytuł</th>
+                                    <th>Klient</th>
+                                    <th>Status</th>
+                                    <th>Data złożenia</th>
+                                    <th>Ostatnia aktualizacja</th>
+                                    <th>Akcje</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders %}
+                                <tr>
+                                    <td>{{ order.id }}</td>
+                                    <td>{{ order.title|truncate(30) }}</td>
+                                    <td>{{ order.user.email }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'primary' if order.status == 'Nowe' else 'warning' if order.status == 'W trakcie' else 'success' }}">
+                                            {{ order.status }}
+                                        </span>
+                                    </td>
+                                    <td>{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td>{{ order.updated_at.strftime('%Y-%m-%d %H:%M') if order.updated_at else '-' }}</td>
+                                    <td>
+                                        <a href="{{ url_for('admin_order_detail', order_id=order.id) }}" class="btn btn-sm btn-outline-primary">Edytuj</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p>Brak zamówień do wyświetlenia.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Panel Klienta{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h2>Witaj w panelu klienta</h2>
+        <p class="lead">Tutaj możesz zarządzać swoimi zamówieniami.</p>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5>Ostatnie zamówienia</h5>
+            </div>
+            <div class="card-body">
+                {% if orders %}
+                    <div class="list-group">
+                        {% for order in orders %}
+                            <a href="{{ url_for('order_status', order_id=order.id) }}" 
+                               class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">#{{ order.id }} - {{ order.title }}</h5>
+                                    <span class="badge bg-{{ 'primary' if order.status == 'Nowe' else 'warning' if order.status == 'W trakcie' else 'success' }}">
+                                        {{ order.status }}
+                                    </span>
+                                </div>
+                                <small>Złożono: {{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>Nie masz jeszcze żadnych zamówień.</p>
+                {% endif %}
+            </div>
+            <div class="card-footer text-end">
+                <a href="{{ url_for('new_order') }}" class="btn btn-primary">Nowe zamówienie</a>
+                <a href="{{ url_for('user_orders') }}" class="btn btn-outline-secondary">Wszystkie zamówienia</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Szybkie akcje</h5>
+            </div>
+            <div class="card-body">
+                <a href="{{ url_for('new_order') }}" class="btn btn-primary w-100 mb-2">Złóż nowe zamówienie</a>
+                <a href="{{ url_for('user_orders') }}" class="btn btn-outline-secondary w-100 mb-2">Przeglądaj zamówienia</a>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5>Statystyki</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Wszystkie zamówienia
+                        <span class="badge bg-primary rounded-pill">{{ orders|length }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Nowe
+                        <span class="badge bg-primary rounded-pill">{{ orders|selectattr('status', 'equalto', 'Nowe')|list|length }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        W trakcie
+                        <span class="badge bg-warning rounded-pill">{{ orders|selectattr('status', 'equalto', 'W trakcie')|list|length }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Zakończone
+                        <span class="badge bg-success rounded-pill">{{ orders|selectattr('status', 'equalto', 'Zakończone')|list|length }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
